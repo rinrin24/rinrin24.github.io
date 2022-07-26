@@ -1,0 +1,41 @@
+#include "getGSearch.as"
+#include "unixTime.as"
+
+;print getGSearchNumWPeriod("godhub", 2021, 10, 10, 2020, 10, 10)
+;print getGSearchNumWPeriod("github", 2020, 10, 24, 2015, 5, 3)
+
+word = ""
+strrep word, " ", "+"
+strrep word, "Å@", "+"
+
+beginYear = 2015
+beginMonth = 1
+beginDay = 1
+
+endYear = gettime(0)
+endMonth = gettime(1)
+endDay = gettime(3)
+
+searchCycle = 30//[Day]
+
+
+beginTime = time2ut(beginYear, beginMonth, beginDay, 0, 0, 0)
+endTime = time2ut(endYear, endMonth, endDay, 0, 0, 0)
+searchCycle *= 24 * 60 * 60
+
+date = ""
+data = ""
+
+repeat (endTime - beginTime) / searchCycle
+	ut2time curYear, curMonth, curDay, curHour, curMin, curSec, beginTime + cnt * searchCycle
+	date += "" + curYear + "/" + curMonth + "/" + curDay + ","
+	tmp = getGSearchNumWPeriod(word, curYear, curMonth, curDay, 0, 0, 0)
+	data += "" + tmp + ","
+	logmes "" + curYear + "/" + curMonth + "/" + curDay + " : " + tmp
+loop
+
+notesel output
+noteadd date
+noteadd data
+notesave "data.csv"
+dialog "saved"
