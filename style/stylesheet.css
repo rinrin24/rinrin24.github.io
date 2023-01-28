@@ -1,0 +1,47 @@
+html{
+    height: 100%;
+    background-color: blue;
+}
+body{
+    height: 100%;
+    margin: 0px;
+    background-color: blueviolet;
+}
+header h1{
+    padding: 0.5em;
+    padding-left: 2em;
+    -webkit-text-stroke: 1px black;
+    background-color:cadetblue;
+    color: white;
+    margin-bottom: 0px;
+}
+nav{
+    background-color: darkslateblue;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+nav ul li{
+    display: inline-flex;
+    text-decoration: none;
+    font-size: large;
+    border-right: 1px solid goldenrod;
+    padding-right: 1em;
+    padding-left: 1em;
+}
+nav ul li a{
+    text-decoration: none;
+    color: white;
+}
+nav ul li:last-child{
+    border-right: none;
+}
+main{
+    background-color: whitesmoke;
+}
+article ul li div{
+    display: inline;
+    font-size: 1.5em;
+}
+.siteLink{
+    padding-right: 2em;
+}
