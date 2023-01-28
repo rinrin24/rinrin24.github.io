@@ -6,8 +6,10 @@
 #include "hspinet.as"
 #module
 #defcfunc getGSearchNum str word
+*start
 	netinit@
-	if stat : dialog "ネット接続できません。" : end
+	;if stat : logmes "ネット接続できません。\n再試行します" : goto *start
+	if stat : mes "ネット接続できません。\n再試行します" : goto *start
 
 	//URLを指定	
 	neturl@ "https://www.google.com/"
@@ -27,11 +29,13 @@
 	;if(aYear != 0) : reqStr += "+after:" + aYear + "-" + aMonth + "-" + aDay
 
 	//ヘッダでユーザーエージェントを設定
-	header = "User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36"
+	;header = "User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36"
+	header = "User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36 Edg/103.0.1264.62"
 	netheader@ header
 
 	//GET形式でCGIにパラメーターを渡す
-	netrequest_get@ reqStr 
+	netrequest_get@ reqStr
+	;netrequest@ reqStr
 
 /*	mes "DOWNLOAD 開始"
 	mes "URL = https://www.google.com/search?hl=ja&source=hp&q=" + word + "+before:" + bYear + "-" + bMonth + "-" + bDay + "+after:" + aYear + "-" + aMonth + "-" + aDay
@@ -50,7 +54,9 @@
 *bad
 	//エラー
 	neterror@ estr
-	mes "ERROR "+estr
+	;logmes "ERROR "+estr + "再試行します"
+	mes "ERROR "+estr + "再試行します"
+	goto *start
 	stop
 
 *comp
@@ -61,9 +67,16 @@
 	netgetv@ buf
 	nkfcnv@ buf, buf,,strlen(buf), strlen(buf)
 
+	mes "https://www.google.com/" + reqStr
 	mesbox buf,640,400,1
 	//件数の部分(id="result-stats")から情報を取得、数値へ変換
-	indx = instr(buf, 0, "id=\"result-stats\">") + strlen("id=\"result-stats\">約 ")
+	tmp = instr(buf, 0, "id=\"result-stats\">")
+	if(tmp == -1) {
+		stop
+		dialog "googleからbotの疑いが出ました\n" + gettime(4) + ":" + gettime(5) + ":" + gettime(6) + "\n再試行します", 1
+		if(stat == 1) : goto *start
+	}
+	indx = tmp + strlen("id=\"result-stats\">約 ")
 	endIndx = instr(buf, 0, "件<nobr>")
 	hoge =  strmid(buf, indx, endIndx - indx)	
 	strrep hoge, ",", ""
@@ -79,4 +92,4 @@
 
 #global
 
-print getGSearchNumWPeriod("github", 0,0,0,0,0,0)
+//print getGSearchNumWPeriod("github", 0,0,0,0,0,0)
